@@ -1,9 +1,14 @@
 package dewz.plugins.wagadget.whatsapp_gadget;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -67,21 +72,72 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
     }
 
 
+    private void shareToWhatsAppApi30(){
+        
+    }
+
+
+
+    public boolean save(Activity activity, ArrayList<byte[]> bytes, String mimeType) {
+         String extention;
+        boolean saved = false;
+        String name;
+        final String IMAGES_FOLDER_NAME = "DewzStatus";
+        OutputStream fos;
+        if (mimeType.contains("image")) extention = ".jpg";
+        else extention = ".mp4";
+        for (int i = 0; i < bytes.size(); i++) {
+            Log.d(TAG, "save: EXTENSION ==============> " + extention);
+            Log.d(TAG, "save: MIME TYPE ==============> " + mimeType);
+            name = String.valueOf(System.currentTimeMillis()) + i;
+            byte[] aByte = bytes.get(i);
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ContentResolver resolver = activity.getContentResolver();
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
+                    contentValues.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);//"image/jpeg"
+                    contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/" + IMAGES_FOLDER_NAME);
+                    Uri imageUri;
+                    if ((mimeType.contains("image")))
+                        imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                    else
+                        imageUri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
+                    fos = resolver.openOutputStream(imageUri);
+                } else {
+                    String imagesDir = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DCIM).toString() + File.separator + IMAGES_FOLDER_NAME;
+                    File file = new File(imagesDir);
+                    if (!file.exists()) {
+                        if (file.mkdir()) {
+                            Log.d(TAG, "save: DIR CREATED");
+                        }
+                    }
+                    File image = new File(imagesDir, name + extention);
+                    fos = new FileOutputStream(image);
+//                    scanMedia(activity, image.getPath());
+                }
+                fos.write(aByte);
+                fos.flush();
+                fos.close();
+                saved = true;
+            } catch (Exception e) {
+                saved = false;
+                e.printStackTrace();
+            }
+        }
+        return saved;
+    }
+
+
     private void shareToWhatsApp(ArrayList<Uri> arr, ArrayList<String> settings) {
         String PACKAGE = settings.get(0);
         String TYPE = settings.get(1);
-        ArrayList<Uri> uris = new ArrayList<>(arr.size());
-        for (Uri uri : arr) {
-            File f = new File(uri.getPath());
-            Log.d(TAG, "shareToWhatsApp: " + uri.getPath());
-            Log.d(TAG, "shareToWhatsApp: " + activity.getCacheDir().getPath());
-            Log.d(TAG, "shareToWhatsApp: " + activity.getExternalCacheDir().getPath());
-        }
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        shareIntent.setType("image/*");//
+        shareIntent.setType(TYPE);//
         shareIntent.putExtra(Intent.EXTRA_STREAM, arr);
         try {
             activity.startActivity(shareIntent);
