@@ -73,9 +73,9 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
-        shareIntent.putExtra(Intent.EXTRA_STREAM, arr.get(0));
-        shareIntent.setType(TYPE);//"image/jpeg"
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.setType("image/*");//
+        shareIntent.putExtra(Intent.EXTRA_STREAM, arr.get(0));
         try {
             activity.startActivity(shareIntent);
             result.success("true");
