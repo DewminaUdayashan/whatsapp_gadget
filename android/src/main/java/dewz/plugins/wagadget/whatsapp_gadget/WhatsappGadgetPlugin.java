@@ -136,15 +136,13 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         String PACKAGE = settings.get(0);
         String TYPE = settings.get(1);
         Log.d(TAG, "shareToWhatsApp: RECIVED TYPE " + TYPE);
-        File f = new File(arr.get(0).getPath());
-        Uri uri =
-                FileProvider.getUriForFile(activity, activity.getPackageName(), f);
+   
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         shareIntent.setType(TYPE);//
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, arr);
         try {
             activity.startActivity(shareIntent);
             result.success("true");
