@@ -82,7 +82,7 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         shareIntent.setPackage(PACKAGE); //com.whatsapp
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         shareIntent.setType("image/*");//
-        shareIntent.putExtra(Intent.EXTRA_STREAM, arr.get(0));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, arr);
         try {
             activity.startActivity(shareIntent);
             result.success("true");
