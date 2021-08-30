@@ -7,9 +7,14 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -65,8 +70,17 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
     private void shareToWhatsApp(ArrayList<Uri> arr, ArrayList<String> settings) {
         String PACKAGE = settings.get(0);
         String TYPE = settings.get(1);
+        ArrayList<Uri> uris = new ArrayList<>(arr.size());
         for (Uri uri : arr) {
             File f = new File(uri.getPath());
+
+            try {
+                f = copyToShareCacheFolder(f);
+                uris.add(FileProvider.getUriForFile(activity, "shareToWa", f));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             if (f.exists()) {
                 Log.d(TAG, "shareToWhatsApp: " + arr.get(0).getPath());
                 Log.d(TAG, "shareToWhatsApp: FILE EXIST");
@@ -79,13 +93,50 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         shareIntent.setPackage(PACKAGE); //com.whatsapp
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         shareIntent.setType("image/*");//
-        shareIntent.putExtra(Intent.EXTRA_STREAM, arr.get(0));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
         try {
             activity.startActivity(shareIntent);
             result.success("true");
         } catch (Exception ex) {
             Log.d(TAG, "shareToWhatsApp: Error on Start Activity => " + ex);
             result.success(ex);
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private File copyToShareCacheFolder(File file) throws IOException {
+        File folder = getShareCacheFolder();
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        File newFile = new File(folder, file.getName());
+        copy(file, newFile);
+        return newFile;
+    }
+
+    @NonNull
+    private File getShareCacheFolder() {
+        return new File(activity.getCacheDir(), "whatsapp_gadget");
+    }
+
+    private static void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        try {
+
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
         }
     }
 
