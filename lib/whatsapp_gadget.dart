@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 class WhatsappGadget {
   static const MethodChannel _channel = const MethodChannel('whatsapp_gadget');
 
+
   static Future<Object> shareToWhatsApp({
     required List<String> paths,
     String type = 'image/jpg',

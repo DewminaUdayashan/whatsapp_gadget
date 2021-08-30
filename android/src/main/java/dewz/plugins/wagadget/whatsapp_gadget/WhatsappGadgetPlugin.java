@@ -1,9 +1,11 @@
 package dewz.plugins.wagadget.whatsapp_gadget;
 
 import android.app.Activity;
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -12,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -133,12 +136,15 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         String PACKAGE = settings.get(0);
         String TYPE = settings.get(1);
         Log.d(TAG, "shareToWhatsApp: RECIVED TYPE " + TYPE);
+        File f = new File(arr.get(0).getPath());
+        Uri uri =
+                FileProvider.getUriForFile(activity, activity.getPackageName(), f);
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         shareIntent.setType(TYPE);//
-        shareIntent.putExtra(Intent.EXTRA_STREAM, arr);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         try {
             activity.startActivity(shareIntent);
             result.success("true");
@@ -146,6 +152,7 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
             Log.d(TAG, "shareToWhatsApp: Error on Start Activity => " + ex);
             result.success(ex);
         }
+
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
