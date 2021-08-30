@@ -73,7 +73,8 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         ArrayList<Uri> uris = new ArrayList<>(arr.size());
         for (Uri uri : arr) {
             File f = new File(uri.getPath());
-
+            Log.d(TAG, "shareToWhatsApp: " + uri.getPath());
+            Log.d(TAG, "shareToWhatsApp: " + activity.getCacheDir().getPath());
             try {
                 f = copyToShareCacheFolder(f);
                 uris.add(FileProvider.getUriForFile(activity, "wagadegets.auth", f));
