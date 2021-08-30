@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 class WhatsappGadget {
   static const MethodChannel _channel = const MethodChannel('whatsapp_gadget');
 
-  static Future<bool?> shareToWhatsApp({
+  static Future<Object> shareToWhatsApp({
     required List<String> paths,
     String type = 'image/jpg',
     String packageName = 'com.whatsapp',
@@ -17,8 +17,7 @@ class WhatsappGadget {
         type,
       ],
     };
-    final bool? version =
-        await _channel.invokeMethod('shareToWhatsApp', payload);
+    final version = await _channel.invokeMethod('shareToWhatsApp', payload);
     return version;
   }
 }
