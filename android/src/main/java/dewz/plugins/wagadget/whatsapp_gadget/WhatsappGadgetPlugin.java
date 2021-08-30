@@ -3,6 +3,7 @@ package dewz.plugins.wagadget.whatsapp_gadget;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -65,7 +66,7 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
-        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, arr);
+        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, (java.util.ArrayList<? extends android.os.Parcelable>) arr);
         shareIntent.setType(TYPE);//"image/jpeg"
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
