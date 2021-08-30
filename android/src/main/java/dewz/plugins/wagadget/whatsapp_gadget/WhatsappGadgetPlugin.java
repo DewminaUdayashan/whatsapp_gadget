@@ -75,7 +75,7 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
             File f = new File(uri.getPath());
             Log.d(TAG, "shareToWhatsApp: " + uri.getPath());
             Log.d(TAG, "shareToWhatsApp: " + activity.getCacheDir().getPath());
-
+            Log.d(TAG, "shareToWhatsApp: " + activity.getExternalCacheDir().getPath());
         }
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
