@@ -72,14 +72,13 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
     }
 
 
-    private void shareToWhatsAppApi30(){
-        
+    private void shareToWhatsAppApi30() {
+
     }
 
 
-
     public boolean save(Activity activity, ArrayList<byte[]> bytes, String mimeType) {
-         String extention;
+        String extention;
         boolean saved = false;
         String name;
         final String IMAGES_FOLDER_NAME = "DewzStatus";
@@ -133,6 +132,7 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
     private void shareToWhatsApp(ArrayList<Uri> arr, ArrayList<String> settings) {
         String PACKAGE = settings.get(0);
         String TYPE = settings.get(1);
+        Log.d(TAG, "shareToWhatsApp: RECIVED TYPE " + TYPE);
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
