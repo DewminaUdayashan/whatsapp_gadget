@@ -12,7 +12,7 @@ class WhatsappGadget {
   }) async {
     var payload = <String, dynamic>{
       'data': paths,
-      'settings': [
+      'settings': <String>[
         packageName,
         type,
       ],

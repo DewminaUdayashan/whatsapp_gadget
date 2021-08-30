@@ -42,11 +42,13 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
 
         if (call.method.equals("shareToWhatsApp")) {
             final Map<String, ArrayList<String>> arg = call.arguments();
+            Log.d(TAG, "onMethodCall: " + arg);
             ArrayList<String> dataList = arg.get("data");
             ArrayList<String> settings = arg.get("settings");
             ArrayList<Uri> dataUriArr = new ArrayList<Uri>();
             assert dataList != null;
             for (String data : dataList) {
+                Log.d(TAG, "onMethodCall: " + data);
                 dataUriArr.add(Uri.parse(data));
             }
             assert settings != null;
