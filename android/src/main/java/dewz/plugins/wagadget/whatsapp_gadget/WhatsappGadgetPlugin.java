@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -63,6 +64,12 @@ public class WhatsappGadgetPlugin implements FlutterPlugin, MethodCallHandler, A
     private void shareToWhatsApp(ArrayList<Uri> arr, ArrayList<String> settings) {
         String PACKAGE = settings.get(0);
         String TYPE = settings.get(1);
+        for (Uri uri : arr) {
+            File f = new File(uri.getPath());
+            if (f.exists()) Log.d(TAG, "shareToWhatsApp: FILE EXIST");
+            else
+                Log.d(TAG, "shareToWhatsApp: FILE NOT FOUND");
+        }
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setPackage(PACKAGE); //com.whatsapp
